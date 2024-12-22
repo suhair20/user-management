@@ -1,0 +1,43 @@
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .admin-table th, .admin-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+  }
+  
+  .admin-table th {
+    background-color: #f2f2f2;
+    font-weight: bold;
+  }
+  
+  .admin-table td {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 200px; /* Adjust as needed */
+  }
+  
+  .admin-table th, .admin-table td {
+    min-width: 150px; /* Adjust as needed */
+  }
+  
+  .admin-table th:nth-child(1), .admin-table td:nth-child(1) { /* ID Column */
+    width: 100px;
+  }
+  
+  .admin-table th:nth-child(2), .admin-table td:nth-child(2) { /* Name Column */
+    width: 200px;
+  }
+  
+  .admin-table th:nth-child(3), .admin-table td:nth-child(3) { /* Email Column */
+    width: 300px;
+  }
+  
+  .admin-table th:nth-child(4), .admin-table td:nth-child(4) { /* Role Column */
+    width: 150px;
+  }
+  
