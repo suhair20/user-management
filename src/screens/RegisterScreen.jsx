@@ -91,11 +91,11 @@ useEffect(()=>{
                <input type="password" value={Password}  onChange={(e)=>SetPassword(e.target.value)} className=" border border-rounded" placeholder="Enter your password" required />
              </div>
              <div className="input-group">
-               <label>Password</label>
+               <label>Confirm Password</label>
                <input type="password" value={ConfirmPassword}  onChange={(e)=>SetConfirmPassword(e.target.value)} className=" border border-rounded" placeholder="Enter your password" required />
              </div>
              </div>
-             <button type="submit" className="login-button">Login</button>
+             <button type="submit" className="login-button">Signup</button>
              <div className="links">
                
                <p>

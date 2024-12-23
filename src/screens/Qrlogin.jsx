@@ -5,10 +5,11 @@ import { useLoginMutation } from "../slices/usersApiSlice";
 import {  useNavigate } from "react-router-dom";
 import { setCredentials } from "../slices/authSlice";
 import { toast } from "react-toastify";
+import photo from '../assets/pexels-dreamypixel-547114.jpg';
 
 function Qrlogin() {
    
-        const [scannedData, setScannedData] = useState('');
+     
 
         const [login,{isLoading}]=useLoginMutation();
         const Navigate=useNavigate();
@@ -20,7 +21,7 @@ function Qrlogin() {
             if (data) {
               try {
                 const scannedText = data.text || 'No text found in the QR code'; // Extract text
-                setScannedData(scannedText);
+               
           
                 // Call the login function with the scanned text
                 const res = await login({ qrCode:scannedText }).unwrap();
@@ -38,6 +39,16 @@ function Qrlogin() {
 
 
   return (
+
+    <div
+              style={{
+                backgroundImage: `url(${photo})`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                height: '100vh',
+                width: '100%'
+              }}
+               className=" flex items-center   ">
     <div className='login-page' >
       <div className="login-form">
       <h1>Login with QR Code</h1>
@@ -47,11 +58,12 @@ function Qrlogin() {
       <QrScanner
         delay={300}
         style={{ width: '100%' }}
-        
+        facingMode="environment"
         onScan={handleScan}
       />
       
-      {scannedData && <p>Scanned Data: {scannedData}</p>}
+      
+    </div>
     </div>
     </div>
   )
