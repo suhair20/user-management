@@ -58,7 +58,7 @@ function Qrlogin() {
       <QrScanner
         delay={300}
         style={{ width: '100%' }}
-        facingMode="environment"
+        facingMode={{ exact: 'environment' }}
         onScan={handleScan}
       />
       
