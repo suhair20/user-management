@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect,useState} from 'react';
 import QrScanner from 'react-qr-scanner';
 import { useDispatch } from "react-redux";
 import { useLoginMutation } from "../slices/usersApiSlice";
@@ -14,6 +14,25 @@ function Qrlogin() {
         const [login,{isLoading}]=useLoginMutation();
         const Navigate=useNavigate();
          const dispatch=useDispatch();
+         const [cameraId, setCameraId] = useState(null);
+
+         useEffect(() => {
+          const getBackCamera = async () => {
+            try {
+              const devices = await navigator.mediaDevices.enumerateDevices();
+              const videoDevices = devices.filter(device => device.kind === 'videoinput');
+              const backCamera = videoDevices.find(device => device.label.includes('back') || device.label.includes('environment'));
+      
+              if (backCamera) {
+                setCameraId(backCamera.deviceId);
+              }
+            } catch (error) {
+              console.error('Error accessing devices:', error);
+            }
+          };
+      
+          getBackCamera();
+        }, []);
         
 
       
@@ -57,8 +76,11 @@ function Qrlogin() {
       {/* QR Code Scanner */}
       <QrScanner
         delay={300}
-        style={{ width: '100%' }}
-        facingMode={{ exact: 'environment' }}
+        style={{ width: '80%' }}
+        videoConstraints={{
+          facingMode: 'environment',
+          deviceId: cameraId, 
+        }}
         onScan={handleScan}
       />
       
