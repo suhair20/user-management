@@ -21,10 +21,17 @@ function Qrlogin() {
             try {
               const devices = await navigator.mediaDevices.enumerateDevices();
               const videoDevices = devices.filter(device => device.kind === 'videoinput');
-              const backCamera = videoDevices.find(device => device.label.includes('back') || device.label.includes('environment'));
+              const backCamera = videoDevices.find(device => device.label.toLowerCase().includes('back') || device.label.toLowerCase().includes('environment'));
       
               if (backCamera) {
                 setCameraId(backCamera.deviceId);
+              }else {
+                console.log("Back camera not found. Defaulting to front camera.");
+                // Fallback to front camera if back camera isn't found
+                const frontCamera = videoDevices.find(device => device.label.toLowerCase().includes('front'));
+                if (frontCamera) {
+                  setCameraId(frontCamera.deviceId); // Fallback to front camera if no back camera
+                }
               }
             } catch (error) {
               console.error('Error accessing devices:', error);
