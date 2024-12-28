@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import { useDispatch } from "react-redux";
 import { useLoginMutation } from "../slices/usersApiSlice";
 import { useNavigate } from "react-router-dom";
@@ -8,40 +8,25 @@ import { Html5Qrcode } from "html5-qrcode";
 import photo from "../assets/pexels-dreamypixel-547114.jpg";
 
 function QrLogin() {
-  const [login, { isLoading }] = useLoginMutation();
+  const [login] = useLoginMutation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const scannerRef = useRef(null);
-  const [qrScanner, setQrScanner] = useState(null);
+  const scannerRef = useRef(null); // Ref for the scanner div
+  const qrCodeScannerRef = useRef(null); // Ref to store Html5Qrcode instance
 
   useEffect(() => {
-    const initializeScanner = async () => {
-      try {
-        if (scannerRef.current) {
-          const html5QrCode = new Html5Qrcode(scannerRef.current.id);
-          setQrScanner(html5QrCode);
-        }
-      } catch (error) {
-        console.error("Error initializing QR Scanner:", error);
-      }
-    };
-    initializeScanner();
+    // Ensure scanner is only initialized if it hasn't been already
+    if (!qrCodeScannerRef.current) {
+      const html5QrCode = new Html5Qrcode(scannerRef.current.id);
+      qrCodeScannerRef.current = html5QrCode;
 
-    return () => {
-      if (qrScanner) {
-        qrScanner.stop().catch(console.error);
-      }
-    };
-  }, []);
-
-  const startScanning = () => {
-    if (qrScanner) {
-      qrScanner
+      // Start the scanner
+      html5QrCode
         .start(
           { facingMode: "environment" },
           {
             fps: 10, // Frames per second
-            qrbox: 250, // Size of scanning box
+            qrbox: 250, // Size of the scanning box
           },
           async (decodedText) => {
             try {
@@ -58,13 +43,17 @@ function QrLogin() {
           console.error("Error starting QR scanner:", err);
         });
     }
-  };
 
-  const stopScanning = () => {
-    if (qrScanner) {
-      qrScanner.stop().catch(console.error);
-    }
-  };
+    // Cleanup to stop and clear the scanner
+    return () => {
+      if (qrCodeScannerRef.current?.isScanning) {
+        qrCodeScannerRef.current
+          .stop()
+          .then(() => qrCodeScannerRef.current.clear())
+          .catch((err) => console.error("Error stopping QR scanner:", err));
+      }
+    };
+  }, [dispatch, login, navigate]);
 
   return (
     <div
@@ -86,25 +75,11 @@ function QrLogin() {
             ref={scannerRef}
             style={{
               width: "300px",
-              height: "250px",
-              border: "1px solid black",
+              height: "300px",
+           
               margin: "auto",
             }}
           ></div>
-          <div className="mt-4">
-            <button
-              onClick={startScanning}
-              className="px-4 py-2 bg-green-500 text-white rounded"
-            >
-              Start Scanning
-            </button>
-            <button
-              onClick={stopScanning}
-              className="px-4 py-2 bg-red-500 text-white rounded ml-2"
-            >
-              Stop Scanning
-            </button>
-          </div>
         </div>
       </div>
     </div>
