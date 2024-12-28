@@ -15,36 +15,37 @@ function QrLogin() {
   const qrCodeScannerRef = useRef(null); // Ref to store Html5Qrcode instance
 
   useEffect(() => {
-    // Ensure scanner is only initialized if it hasn't been already
-    if (!qrCodeScannerRef.current) {
-      const html5QrCode = new Html5Qrcode(scannerRef.current.id);
-      qrCodeScannerRef.current = html5QrCode;
+    const initializeScanner = async () => {
+      if (!qrCodeScannerRef.current) {
+        const html5QrCode = new Html5Qrcode(scannerRef.current.id);
+        qrCodeScannerRef.current = html5QrCode;
 
-      // Start the scanner
-      html5QrCode
-        .start(
-          { facingMode: "environment" },
-          {
-            fps: 10, // Frames per second
-            qrbox: 250, // Size of the scanning box
-          },
-          async (decodedText) => {
-            try {
-              const res = await login({ qrCode: decodedText }).unwrap();
-              dispatch(setCredentials({ ...res }));
-              navigate("/");
-            } catch (err) {
-              console.error(err);
-              toast.error(err?.data?.message || err.error);
+        try {
+          await html5QrCode.start(
+            { facingMode: "environment" }, // Default to back camera
+            {
+              fps: 10,
+              qrbox: 250,
+            },
+            async (decodedText) => {
+              try {
+                const res = await login({ qrCode: decodedText }).unwrap();
+                dispatch(setCredentials({ ...res }));
+                navigate("/");
+              } catch (err) {
+                console.error(err);
+                toast.error(err?.data?.message || err.error);
+              }
             }
-          }
-        )
-        .catch((err) => {
+          );
+        } catch (err) {
           console.error("Error starting QR scanner:", err);
-        });
-    }
+        }
+      }
+    };
 
-    // Cleanup to stop and clear the scanner
+    initializeScanner();
+
     return () => {
       if (qrCodeScannerRef.current?.isScanning) {
         qrCodeScannerRef.current
@@ -76,7 +77,7 @@ function QrLogin() {
             style={{
               width: "300px",
               height: "300px",
-           
+              
               margin: "auto",
             }}
           ></div>
@@ -87,5 +88,6 @@ function QrLogin() {
 }
 
 export default QrLogin;
+
 
 
