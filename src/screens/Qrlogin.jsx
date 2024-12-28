@@ -51,7 +51,7 @@ function QrLogin() {
         qrCodeScannerRef.current
           .stop()
           .then(() => qrCodeScannerRef.current.clear())
-          .catch((err) => console.error("Error stopping QR scanner:", err));
+          .catch((err) => console.error("Error stopping Qr scanner:", err));
       }
     };
   }, [dispatch, login, navigate]);
