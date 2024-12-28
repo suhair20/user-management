@@ -1,101 +1,116 @@
-import React, { useEffect,useState} from 'react';
-import QrScanner from 'react-qr-scanner';
+import React, { useEffect, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useLoginMutation } from "../slices/usersApiSlice";
-import {  useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { setCredentials } from "../slices/authSlice";
 import { toast } from "react-toastify";
-import photo from '../assets/pexels-dreamypixel-547114.jpg';
+import { Html5Qrcode } from "html5-qrcode";
+import photo from "../assets/pexels-dreamypixel-547114.jpg";
 
-function Qrlogin() {
-   
-     
+function QrLogin() {
+  const [login, { isLoading }] = useLoginMutation();
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const scannerRef = useRef(null);
+  const [qrScanner, setQrScanner] = useState(null);
 
-        const [login,{isLoading}]=useLoginMutation();
-        const Navigate=useNavigate();
-         const dispatch=useDispatch();
-         const [cameraId, setCameraId] = useState(null);
+  useEffect(() => {
+    const initializeScanner = async () => {
+      try {
+        if (scannerRef.current) {
+          const html5QrCode = new Html5Qrcode(scannerRef.current.id);
+          setQrScanner(html5QrCode);
+        }
+      } catch (error) {
+        console.error("Error initializing QR Scanner:", error);
+      }
+    };
+    initializeScanner();
 
-         useEffect(() => {
-          const getBackCamera = async () => {
+    return () => {
+      if (qrScanner) {
+        qrScanner.stop().catch(console.error);
+      }
+    };
+  }, []);
+
+  const startScanning = () => {
+    if (qrScanner) {
+      qrScanner
+        .start(
+          { facingMode: "environment" },
+          {
+            fps: 10, // Frames per second
+            qrbox: 250, // Size of scanning box
+          },
+          async (decodedText) => {
             try {
-              const devices = await navigator.mediaDevices.enumerateDevices();
-              const videoDevices = devices.filter(device => device.kind === 'videoinput');
-              const backCamera = videoDevices.find(device => device.label.toLowerCase().includes('back') || device.label.toLowerCase().includes('environment'));
-      
-              if (backCamera) {
-                setCameraId(backCamera.deviceId);
-              }else {
-                console.log("Back camera not found. Defaulting to front camera.");
-                // Fallback to front camera if back camera isn't found
-                const frontCamera = videoDevices.find(device => device.label.toLowerCase().includes('front'));
-                if (frontCamera) {
-                  setCameraId(frontCamera.deviceId); // Fallback to front camera if no back camera
-                }
-              }
-            } catch (error) {
-              console.error('Error accessing devices:', error);
+              const res = await login({ qrCode: decodedText }).unwrap();
+              dispatch(setCredentials({ ...res }));
+              navigate("/");
+            } catch (err) {
+              console.error(err);
+              toast.error(err?.data?.message || err.error);
             }
-          };
-      
-          getBackCamera();
-        }, []);
-        
+          }
+        )
+        .catch((err) => {
+          console.error("Error starting QR scanner:", err);
+        });
+    }
+  };
 
-      
-        const handleScan = async (data) => {
-            if (data) {
-              try {
-                const scannedText = data.text || 'No text found in the QR code'; // Extract text
-               
-          
-                // Call the login function with the scanned text
-                const res = await login({ qrCode:scannedText }).unwrap();
-                dispatch(setCredentials({ ...res }));
-          
-                // Redirect or take further action after successful login
-                Navigate('/');
-              } catch (err) {
-                console.error(err);
-                toast.error(err?.data?.message || err.error);
-              }
-            }
-          };
-    
-
+  const stopScanning = () => {
+    if (qrScanner) {
+      qrScanner.stop().catch(console.error);
+    }
+  };
 
   return (
-
     <div
-              style={{
-                backgroundImage: `url(${photo})`,
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-                height: '100vh',
-                width: '100%'
-              }}
-               className=" flex items-center   ">
-    <div className='login-page' >
-      <div className="login-form">
-      <h1>Login with QR Code</h1>
-      <p>Scan the QR Code to login</p>
-
-      {/* QR Code Scanner */}
-      <QrScanner
-        delay={300}
-        style={{ width: '80%' }}
-        videoConstraints={{
-          facingMode: 'environment',
-          deviceId: cameraId, 
-        }}
-        onScan={handleScan}
-      />
-      
-      
+      style={{
+        backgroundImage: `url(${photo})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        height: "100vh",
+        width: "100%",
+      }}
+      className="flex items-center justify-center"
+    >
+      <div className="login-page">
+        <div className="login-form">
+          <h1>Login with QR Code</h1>
+          <p>Scan the QR Code to login</p>
+          <div
+            id="qr-reader"
+            ref={scannerRef}
+            style={{
+              width: "300px",
+              height: "250px",
+              border: "1px solid black",
+              margin: "auto",
+            }}
+          ></div>
+          <div className="mt-4">
+            <button
+              onClick={startScanning}
+              className="px-4 py-2 bg-green-500 text-white rounded"
+            >
+              Start Scanning
+            </button>
+            <button
+              onClick={stopScanning}
+              className="px-4 py-2 bg-red-500 text-white rounded ml-2"
+            >
+              Stop Scanning
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
-    </div>
-    </div>
-  )
+  );
 }
 
-export default Qrlogin
+export default QrLogin;
+
+
