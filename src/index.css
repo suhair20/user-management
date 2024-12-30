@@ -131,7 +131,7 @@ svg path{
   .login-button {
     width: 100%;
     padding: 1rem;
-    background-color: rgba(36, 36, 97, 0.68); /* Custom color */
+    background-color: rgba(7, 7, 18, 0.68); /* Custom color */
     color: white;
     font-size: 1rem;
     border: none;
@@ -212,6 +212,10 @@ svg path{
     align-items: center; /* Vertically center the content */
     flex-direction: column; /* Arrange the QR code and download link in a column */
     text-align: center; /* Center the text below the QR code */
+  }
+
+  .button-v{
+    color: rgba(0, 0, 255, 0.836);
   }
   
 

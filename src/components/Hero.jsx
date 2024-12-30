@@ -31,11 +31,13 @@ className="w-full flex h-auto"
 
 
 </svg>
+<div>
 <Link to='/login' >
-<button class=" px-8 py-1 text-white rounded rounded-full bg-black " >
+<button class="   px-8 py-1 text-white rounded rounded-full bg-black "   >
       Continue
     </button>
     </Link>
+    </div>
 
 
 

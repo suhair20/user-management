@@ -80,11 +80,11 @@ useEffect(()=>{
            <div className="form-container">
              <div className="input-group">
                <label>Name</label>
-               <input type="Name" value={name} onChange={(e)=>setName(e.target.value)} className=" border border-rounded " placeholder="Enter your email" required />
+               <input type="Name" value={name} onChange={(e)=>setName(e.target.value)} className=" border border-rounded " placeholder="Enter your name" required />
              </div>
              <div className="input-group">
                <label>Email</label>
-               <input type="Email" value={email} onChange={(e)=>setEmail(e.target.value)} className=" border border-rounded" placeholder="Enter your password" required />
+               <input type="Email" value={email} onChange={(e)=>setEmail(e.target.value)} className=" border border-rounded" placeholder="Enter your email" required />
              </div>
              <div className="input-group">
                <label>Password</label>
