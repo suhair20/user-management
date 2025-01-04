@@ -25,7 +25,8 @@ function QrLogin() {
             { facingMode: "environment" }, // Default to back camera
             {
               fps: 10,
-              qrbox: 250,
+              qrbox: { width: 250, height: 250 }, 
+              aspectRatio: 1.0, // 
             },
             async (decodedText) => {
               try {
