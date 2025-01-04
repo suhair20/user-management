@@ -25,7 +25,7 @@ function QrLogin() {
             { facingMode: "environment" }, // Default to back camera
             {
               fps: 10,
-              qrbox: 200,
+              qrbox: 250,
             },
             async (decodedText) => {
               try {
@@ -76,7 +76,7 @@ function QrLogin() {
             ref={scannerRef}
             style={{
               width: "300px",
-              height: "250px",
+              height: "340px",
               
               margin: "auto",
             }}
