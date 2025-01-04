@@ -76,7 +76,7 @@ function QrLogin() {
             ref={scannerRef}
             style={{
               width: "300px",
-              height: "340px",
+              height: "345px",
               
               margin: "auto",
             }}
